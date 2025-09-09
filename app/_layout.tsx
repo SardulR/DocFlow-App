@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Stack } from 'expo-router';
-import SplashScreen from '@/components/SplashScreen'
+import SplashScreen from '@/components/SplashScreen'; // Assuming this is your custom JS splash screen
 
 export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
-
     async function prepare() {
       try {
-        
+        // Simulate loading assets, fonts, etc.
         await new Promise(resolve => setTimeout(resolve, 2000));
       } catch (e) {
         console.warn(e);
       } finally {
-        
         setAppIsReady(true);
       }
     }
@@ -22,16 +20,15 @@ export default function RootLayout() {
     prepare();
   }, []);
 
-  
   if (!appIsReady) {
     return <SplashScreen />;
   }
 
-
+  
   return (
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="+not-found" />
+     
     </Stack>
   );
 }
