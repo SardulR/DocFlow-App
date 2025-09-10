@@ -4,21 +4,20 @@ import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
-import { TOOLS } from '@/constants/tools'; // Import from the new constants file
+import { TOOLS } from '@/constants/tools';
 
 const COLORS = {
   primary: "#d90429",
   background: "#edf2f4",
   card: "rgba(255, 255, 255, 0.9)",
   text: "#2b2d42",
-  mutedForeground: "#8d99ae", // Added mutedForeground color
+  mutedForeground: "#8d99ae", 
 };
 
 // --- Main Home Screen Component ---
 export default function HomeScreen() {
   const router = useRouter(); // Get the router object
 
-  // The handler now navigates to the dynamic tool screen
   const handleToolSelect = (toolId: string) => {
     router.push({ pathname: "/tools/[id]", params: { id: toolId } });
   };

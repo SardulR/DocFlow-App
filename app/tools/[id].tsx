@@ -23,6 +23,16 @@ export default function ToolScreen() {
   const [isProcessing, setIsProcessing] = useState(false);
   const progressAnim = useRef(new Animated.Value(0)).current;
 
+  const navigateBackSafely = () => {
+    // router.canGoBack may not exist on older router shapes, guard it
+    if (typeof router.canGoBack === 'function' && router.canGoBack()) {
+      router.back();
+    } else {
+      // fallback to a safe route
+      router.replace('/');
+    }
+  };
+
   const handleFileUpload = () => {
     setIsProcessing(true);
     progressAnim.setValue(0);
@@ -32,8 +42,20 @@ export default function ToolScreen() {
       useNativeDriver: false,
     }).start(() => {
       setIsProcessing(false);
-      Alert.alert("Success!", `${selectedTool?.name} completed successfully.`);
-      router.back();
+  
+      Alert.alert(
+        "Success!",
+        `${selectedTool?.name} completed successfully.`,
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              navigateBackSafely();
+            },
+          },
+        ],
+        { cancelable: false }
+      );
     });
   };
 
@@ -57,7 +79,7 @@ export default function ToolScreen() {
     <SafeAreaView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
       <ScrollView style={styles.screenContainer}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <TouchableOpacity onPress={navigateBackSafely} style={styles.backButton}>
           <Icon name="arrow-left" size={20} color={COLORS.mutedForeground} />
           <Text style={styles.backButtonText}>Back to Tools</Text>
         </TouchableOpacity>
