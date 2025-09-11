@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Stack } from 'expo-router';
-import SplashScreen from '@/components/SplashScreen'; // Assuming this is your custom JS splash screen
+import SplashScreen from '@/components/SplashScreen'; 
 
 export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
