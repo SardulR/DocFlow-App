@@ -1,10 +1,11 @@
 // File: app/tools/[id].tsx
 
-import React, { useState, useRef } from 'react';
-import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Animated, Alert, ScrollView } from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { TOOLS } from '@/constants/tools';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useRef, useState } from 'react';
+import { Alert, Animated,  ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const COLORS = {
   primary: "#d90429",
