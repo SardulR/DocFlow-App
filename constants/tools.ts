@@ -16,6 +16,7 @@ export const TOOLS = [
     description: "Insert page numbers into a PDF",
     category: "pdf",
   },
+  { id: "remove-bg", name: "Remove Background", icon: "image-edit-outline" as const, description: "Remove image background", category: "image" },
   {
     id: "extract-pdf-pages",
     name: "Extract PDF Pages",
@@ -36,5 +37,5 @@ export const TOOLS = [
   { id: "pdf-to-excel", name: "PDF to Excel", icon: "file-excel-outline" as const, description: "Convert PDF to Excel", category: "pdf" },
   { id: "image-to-pdf", name: "Image to PDF", icon: "file-image-outline" as const, description: "Convert images to PDF", category: "image" },
   { id: "pdf-to-image", name: "PDF to Image", icon: "file-image-outline" as const, description: "Convert PDF to Image", category: "pdf" },
-  { id: "remove-bg", name: "Remove Background", icon: "image-edit-outline" as const, description: "Remove image background", category: "image" },
+  
 ];
