@@ -1,6 +1,11 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
-import {  StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { 
+  StyleSheet, 
+  Text, 
+  useWindowDimensions, 
+  View 
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const colors = {
@@ -49,11 +54,11 @@ const RecentScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Ionicons 
-          name="time-outline" 
-          size={64} 
-          color={colors.secondaryText} 
-        />
+ <MaterialIcons 
+  name="access-time" 
+  size={64} 
+  color={colors.secondaryText} 
+/>
         
         <Text style={styles.title}>Recent Files</Text>
         
@@ -66,4 +71,3 @@ const RecentScreen: React.FC = () => {
 };
 
 export default RecentScreen;
-
