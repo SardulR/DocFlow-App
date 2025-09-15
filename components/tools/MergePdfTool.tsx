@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  StyleSheet, 
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
   Alert,
-  ScrollView
+  ScrollView,
 } from "react-native";
-import * as DocumentPicker from 'expo-document-picker';
-import { File, Paths } from 'expo-file-system';
-import * as Sharing from 'expo-sharing';
+import * as DocumentPicker from "expo-document-picker";
+import { File } from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
+import * as Sharing from "expo-sharing";
 import { UploadCard } from "@/components/ui/UploadCard";
 import { ProcessingCard } from "@/components/ui/ProcessingCard";
 
@@ -27,29 +28,29 @@ export default function MergePdfTool() {
   const pickFiles = async () => {
     try {
       const results = await DocumentPicker.getDocumentAsync({
-        type: 'application/pdf',
+        type: "application/pdf",
         multiple: true,
         copyToCacheDirectory: true,
       });
 
       if (!results.canceled && results.assets) {
-        const newFiles = results.assets.map(file => ({
+        const newFiles = results.assets.map((file) => ({
           uri: file.uri,
           name: file.name,
-          type: file.mimeType || 'application/pdf',
+          type: file.mimeType || "application/pdf",
           size: file.size,
         }));
-        setFiles(prevFiles => [...prevFiles, ...newFiles]);
+        setFiles((prevFiles) => [...prevFiles, ...newFiles]);
       }
     } catch (err) {
-      console.error('Error picking files:', err);
-      Alert.alert('Error', 'Failed to pick files');
+      console.error("Error picking files:", err);
+      Alert.alert("Error", "Failed to pick files");
     }
   };
 
   const handleMerge = async () => {
     if (files.length < 2) {
-      Alert.alert('Error', 'Please select at least 2 PDF files to merge');
+      Alert.alert("Error", "Please select at least 2 PDF files to merge");
       return;
     }
 
@@ -59,49 +60,53 @@ export default function MergePdfTool() {
       const formData = new FormData();
 
       for (const file of files) {
-        const fileObj = new File(file.uri);
-        if (await fileObj.existsAsync()) {
-          formData.append('files', {
+        const fileRef = new File(file as any);
+        const info = await fileRef.info();
+
+        if (info.exists) {
+          formData.append("files", {
             uri: file.uri,
             type: file.type,
             name: file.name,
           } as any);
+        } else {
+          console.warn("File does not exist:", file.uri);
         }
       }
 
-      const response = await fetch('https://docflow-backend-q83c.onrender.com/api/merge-pdf', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        "https://docflow-backend-q83c.onrender.com/api/merge-pdf",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const responseData = await response.json();
-      const { data: base64Data, filename = 'merged.pdf' } = responseData;
+      const { data: base64Data, filename = "merged.pdf" } = responseData;
 
-      // Save base64 PDF as file using File class
-      const mergedFile = new File(Paths.document, filename);
-      await mergedFile.write(base64Data);
+      // Save merged file
+      const fileUri = `${FileSystem.documentDirectory}${filename}`;
+      await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
 
-      Alert.alert(
-        'Success', 
-        `PDF merged successfully!`,
-        [
-          { text: 'OK', style: 'default' },
-          { text: 'Share File', onPress: () => shareFile(mergedFile.uri) },
-        ]
-      );
-
+      Alert.alert("Success", "PDF merged successfully!", [
+        { text: "OK", style: "default" },
+        { text: "Share File", onPress: () => shareFile(fileUri) },
+      ]);
     } catch (error) {
-      console.error('Merge error:', error);
+      console.error("Merge error:", error);
       Alert.alert(
-        'Error', 
-        'Failed to merge PDFs. Please check your internet connection and try again.'
+        "Error",
+        "Failed to merge PDFs. Please check your internet connection and try again."
       );
     } finally {
       setLoading(false);
@@ -114,11 +119,11 @@ export default function MergePdfTool() {
       if (isAvailable) {
         await Sharing.shareAsync(fileUri);
       } else {
-        Alert.alert('Info', 'File saved to app documents');
+        Alert.alert("Info", "File saved to app documents");
       }
     } catch (error) {
-      console.error('Error sharing file:', error);
-      Alert.alert('Error', 'Could not share the merged PDF file');
+      console.error("Error sharing file:", error);
+      Alert.alert("Error", "Could not share the merged PDF file");
     }
   };
 
@@ -127,15 +132,15 @@ export default function MergePdfTool() {
   };
 
   const formatFileSize = (size?: number) => {
-    if (!size) return 'Unknown size';
-    return (size / 1024 / 1024).toFixed(2) + ' MB';
+    if (!size) return "Unknown size";
+    return (size / 1024 / 1024).toFixed(2) + " MB";
   };
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>PDF Merge Tool</Text>
 
-      <UploadCard 
+      <UploadCard
         onPress={pickFiles}
         title="Select PDF Files"
         subtitle="Tap here to browse and select PDF files"
@@ -143,18 +148,18 @@ export default function MergePdfTool() {
 
       {files.length > 0 && (
         <View style={styles.fileList}>
-          <Text style={styles.sectionTitle}>Selected Files ({files.length}):</Text>
+          <Text style={styles.sectionTitle}>
+            Selected Files ({files.length}):
+          </Text>
           {files.map((file, index) => (
             <View key={`${file.uri}-${index}`} style={styles.fileItem}>
               <View style={styles.fileInfo}>
                 <Text style={styles.fileName} numberOfLines={1}>
                   {file.name}
                 </Text>
-                <Text style={styles.fileSize}>
-                  {formatFileSize(file.size)}
-                </Text>
+                <Text style={styles.fileSize}>{formatFileSize(file.size)}</Text>
               </View>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.removeButton}
                 onPress={() => removeFile(index)}
               >
@@ -175,17 +180,16 @@ export default function MergePdfTool() {
         <ProcessingCard message="Merging PDFs..." progressWidth={50} />
       ) : (
         <TouchableOpacity
-          style={[
-            styles.mergeButton,
-            files.length < 2 && styles.disabledButton
-          ]}
+          style={[styles.mergeButton, files.length < 2 && styles.disabledButton]}
           onPress={handleMerge}
           disabled={files.length < 2}
         >
-          <Text style={[
-            styles.mergeButtonText,
-            files.length < 2 && styles.disabledButtonText
-          ]}>
+          <Text
+            style={[
+              styles.mergeButtonText,
+              files.length < 2 && styles.disabledButtonText,
+            ]}
+          >
             Merge PDFs ({files.length} files)
           </Text>
         </TouchableOpacity>
@@ -193,50 +197,47 @@ export default function MergePdfTool() {
 
       <View style={styles.instructions}>
         <Text style={styles.instructionText}>
-          • Select at least 2 PDF files to merge{'\n'}
-          • Files will be merged in the order selected{'\n'}
-          • The merged PDF will be saved and can be shared
+          • Select at least 2 PDF files to merge{"\n"}• Files will be merged in
+          the order selected{"\n"}• The merged PDF will be saved and can be
+          shared
         </Text>
       </View>
     </ScrollView>
   );
 }
 
-// Styles remain the same
+// ✅ Styles remain the same
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 20,
-    color: '#333',
+    color: "#333",
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 10,
-    color: '#666',
+    color: "#666",
   },
   fileList: {
     marginVertical: 20,
   },
   fileItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
     padding: 12,
     marginBottom: 8,
     borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
     elevation: 3,
@@ -246,68 +247,68 @@ const styles = StyleSheet.create({
   },
   fileName: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#333',
+    fontWeight: "500",
+    color: "#333",
     marginBottom: 2,
   },
   fileSize: {
     fontSize: 12,
-    color: '#666',
+    color: "#666",
   },
   removeButton: {
-    backgroundColor: '#ff4444',
+    backgroundColor: "#ff4444",
     borderRadius: 15,
     width: 30,
     height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   removeButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   addMoreButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     padding: 12,
     borderRadius: 8,
     marginBottom: 15,
   },
   addMoreButtonText: {
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   mergeButton: {
-    backgroundColor: '#34C759',
+    backgroundColor: "#34C759",
     padding: 15,
     borderRadius: 8,
     marginTop: 10,
   },
   disabledButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
   },
   mergeButtonText: {
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   disabledButtonText: {
-    color: '#999',
+    color: "#999",
   },
   instructions: {
     marginTop: 20,
     padding: 15,
-    backgroundColor: '#e8f4f8',
+    backgroundColor: "#e8f4f8",
     borderRadius: 8,
     borderLeftWidth: 4,
-    borderLeftColor: '#007AFF',
+    borderLeftColor: "#007AFF",
   },
   instructionText: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
     lineHeight: 20,
   },
 });
