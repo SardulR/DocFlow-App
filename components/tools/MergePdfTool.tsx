@@ -8,8 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
-import { File } from "expo-file-system";
-import * as FileSystem from "expo-file-system/legacy";
+import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import { UploadCard } from "@/components/ui/UploadCard";
 import { ProcessingCard } from "@/components/ui/ProcessingCard";
@@ -60,28 +59,19 @@ export default function MergePdfTool() {
       const formData = new FormData();
 
       for (const file of files) {
-        const fileRef = new File(file as any);
-        const info = await fileRef.info();
-
-        if (info.exists) {
-          formData.append("files", {
-            uri: file.uri,
-            type: file.type,
-            name: file.name,
-          } as any);
-        } else {
-          console.warn("File does not exist:", file.uri);
-        }
+        formData.append("pdfs", {
+          uri: file.uri,
+          type: file.type,
+          name: file.name,
+        } as any);
       }
 
       const response = await fetch(
         "https://docflow-backend-q83c.onrender.com/api/merge-pdf",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
           body: formData,
+          // ✅ Don't set Content-Type header - let browser set it with boundary
         }
       );
 
@@ -89,13 +79,27 @@ export default function MergePdfTool() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const responseData = await response.json();
-      const { data: base64Data, filename = "merged.pdf" } = responseData;
+      // ✅ Get the PDF as blob, then convert to base64
+      const blob = await response.blob();
+      
+      // ✅ Convert blob to base64 using FileReader (works in React Native)
+      const base64Data = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64 = (reader.result as string).split(',')[1];
+          resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
 
-      // Save merged file
-      const fileUri = `${FileSystem.documentDirectory}${filename}`;
+      // ✅ Save the file
+      const documentDirectory = FileSystem.documentDirectory as string;
+      const filename = "merged.pdf";
+      const fileUri = `${documentDirectory}${filename}`;
+
       await FileSystem.writeAsStringAsync(fileUri, base64Data, {
-        encoding: FileSystem.EncodingType.Base64,
+        encoding: "base64",
       });
 
       Alert.alert("Success", "PDF merged successfully!", [
@@ -206,7 +210,6 @@ export default function MergePdfTool() {
   );
 }
 
-// ✅ Styles remain the same
 const styles = StyleSheet.create({
   container: {
     flex: 1,
