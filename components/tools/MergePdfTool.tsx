@@ -99,7 +99,7 @@ export default function MergePdfTool() {
       const fileUri = `${documentDirectory}${filename}`;
 
       await FileSystem.writeAsStringAsync(fileUri, base64Data, {
-        encoding: "base64",
+        encoding: FileSystem.EncodingType.Base64,
       });
 
       Alert.alert("Success", "PDF merged successfully!", [
