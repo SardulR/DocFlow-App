@@ -1,17 +1,17 @@
+import { ProcessingCard } from "@/components/ui/ProcessingCard";
+import { UploadCard } from "@/components/ui/UploadCard";
+import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system/legacy";
+import * as Sharing from "expo-sharing";
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
   Alert,
   ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import * as DocumentPicker from "expo-document-picker";
-import * as FileSystem from "expo-file-system";
-import * as Sharing from "expo-sharing";
-import { UploadCard } from "@/components/ui/UploadCard";
-import { ProcessingCard } from "@/components/ui/ProcessingCard";
 
 interface FileItem {
   uri: string;
@@ -93,10 +93,10 @@ export default function MergePdfTool() {
         reader.readAsDataURL(blob);
       });
 
-      // ✅ Save the file
-      const documentDirectory = FileSystem.documentDirectory as string;
+      // ✅ Save the file using FileSystem.documentDirectory
+      const docDir = FileSystem.documentDirectory;
       const filename = "merged.pdf";
-      const fileUri = `${documentDirectory}${filename}`;
+      const fileUri = `${docDir}${filename}`;
 
       await FileSystem.writeAsStringAsync(fileUri, base64Data, {
         encoding: FileSystem.EncodingType.Base64,
