@@ -3,8 +3,8 @@ export const TOOLS = [
   { id: "split-pdf", name: "Split PDF", icon: "file-document-multiple-outline" as const, description: "Split PDF into pages", category: "pdf" },
   { id: "compress-pdf", name: "Compress PDF", icon: "arrow-collapse" as const, description: "Reduce PDF file size", category: "pdf" },
   {
-    id: "organise-pdf",
-    name: "Organise PDF",
+    id: "organize-pdf",
+    name: "Organize PDF",
     icon: "file-move-outline" as const,
     description: "Reorder, rotate, or delete pages",
     category: "pdf",

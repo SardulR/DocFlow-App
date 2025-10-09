@@ -14,7 +14,7 @@ import { THEME } from "@/constants/theme";
 import MergePdfTool from "@/components/tools/MergePdfTool";
 import SplitPdfTool from "@/components/tools/SplitPdfTool";
 // import CompressPdfTool from "@/components/tools/CompressPdfTool";
-// import OrganisePdfTool from "@/components/tools/OrganisePdfTool";
+import OrganizePdfTool from "@/components/tools/OrganizePdfTool";
 // ...import others
 
 // Registry of tool components
@@ -22,7 +22,7 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "merge-pdf": MergePdfTool,
   "split-pdf": SplitPdfTool,
   // "compress-pdf": CompressPdfTool,
-  // "organise-pdf": OrganisePdfTool,
+  "organize-pdf": OrganizePdfTool,
 };
 
 export default function ToolScreen(): JSX.Element {
