@@ -20,11 +20,11 @@ import OrganizePdfTool from "@/components/tools/OrganizePdfTool";
 // import ExtractPdfPagesTool from "@/components/tools/ExtractPdfPagesTool";
 // import RemovePdfPagesTool from "@/components/tools/RemovePdfPagesTool";
 // import PdfToWordTool from "@/components/tools/PdfToWordTool";
-// import WordToPdfTool from "@/components/tools/WordToPdfTool";
+import WordToPdfTool from "@/components/tools/WordToPdfTool";
 // import ExcelToPdfTool from "@/components/tools/ExcelToPdfTool";
 // import PdfToExcelTool from "@/components/tools/PdfToExcelTool";
 import ImageToPdfTool from "@/components/tools/ImageToPdfTool";
-// import PdfToImageTool from "@/components/tools/PdfToImageTool";
+import PdfToImageTool from "@/components/tools/PdfToImageTool";
 
 // Registry of tool components
 const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -37,11 +37,11 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   // "extract-pdf-pages": OrganizePdfTool, 
   // "remove-pdf-pages": OrganizePdfTool, 
   // "pdf-to-word": OrganizePdfTool, 
-  // "word-to-pdf": OrganizePdfTool, 
+   "word-to-pdf": WordToPdfTool, 
   // "excel-to-pdf": OrganizePdfTool, 
   // "pdf-to-excel": OrganizePdfTool, 
    "image-to-pdf": ImageToPdfTool, 
-  // "pdf-to-image": OrganizePdfTool, 
+   "pdf-to-image": PdfToImageTool, 
 };
 
 export default function ToolScreen(): JSX.Element {
