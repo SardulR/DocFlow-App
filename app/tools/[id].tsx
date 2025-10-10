@@ -15,7 +15,16 @@ import MergePdfTool from "@/components/tools/MergePdfTool";
 import SplitPdfTool from "@/components/tools/SplitPdfTool";
 // import CompressPdfTool from "@/components/tools/CompressPdfTool";
 import OrganizePdfTool from "@/components/tools/OrganizePdfTool";
-// ...import others
+// import AddPageNumbersTool from "@/components/tools/AddPageNumbersTool";
+// import RemoveBgTool from "@/components/tools/RemoveBgTool";
+// import ExtractPdfPagesTool from "@/components/tools/ExtractPdfPagesTool";
+// import RemovePdfPagesTool from "@/components/tools/RemovePdfPagesTool";
+// import PdfToWordTool from "@/components/tools/PdfToWordTool";
+// import WordToPdfTool from "@/components/tools/WordToPdfTool";
+// import ExcelToPdfTool from "@/components/tools/ExcelToPdfTool";
+// import PdfToExcelTool from "@/components/tools/PdfToExcelTool";
+import ImageToPdfTool from "@/components/tools/ImageToPdfTool";
+// import PdfToImageTool from "@/components/tools/PdfToImageTool";
 
 // Registry of tool components
 const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
@@ -23,6 +32,16 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "split-pdf": SplitPdfTool,
   // "compress-pdf": CompressPdfTool,
   "organize-pdf": OrganizePdfTool,
+  // "add-page-numbers": OrganizePdfTool, 
+  // "remove-bg": OrganizePdfTool,
+  // "extract-pdf-pages": OrganizePdfTool, 
+  // "remove-pdf-pages": OrganizePdfTool, 
+  // "pdf-to-word": OrganizePdfTool, 
+  // "word-to-pdf": OrganizePdfTool, 
+  // "excel-to-pdf": OrganizePdfTool, 
+  // "pdf-to-excel": OrganizePdfTool, 
+   "image-to-pdf": ImageToPdfTool, 
+  // "pdf-to-image": OrganizePdfTool, 
 };
 
 export default function ToolScreen(): JSX.Element {
