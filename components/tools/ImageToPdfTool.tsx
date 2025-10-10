@@ -1,6 +1,6 @@
 import { ProcessingCard } from "@/components/ui/ProcessingCard";
 import { UploadCard } from "@/components/ui/UploadCard";
-import * as DocumentPicker from "expo-document-picker";
+import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 import React, { useState } from "react";
@@ -24,26 +24,38 @@ export default function ImageToPdfTool() {
   const [files, setFiles] = useState<FileItem[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const pickFiles = async () => {
+  const pickImages = async () => {
     try {
-      const results = await DocumentPicker.getDocumentAsync({
-        type: ["image/jpeg", "image/jpg", "image/png"],
-        multiple: true,
-        copyToCacheDirectory: true,
+      // Request permission to access media library
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permission Required',
+          'Please grant permission to access your photos to select images.'
+        );
+        return;
+      }
+
+      // Launch image picker with multiple selection
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsMultipleSelection: true,
+        quality: 1,
       });
 
-      if (!results.canceled && results.assets) {
-        const newFiles = results.assets.map((file) => ({
-          uri: file.uri,
-          name: file.name,
-          type: file.mimeType || "image/jpeg",
-          size: file.size,
+      if (!result.canceled && result.assets) {
+        const newFiles = result.assets.map((asset, index) => ({
+          uri: asset.uri,
+          name: asset.fileName || `image_${Date.now()}_${index}.jpg`,
+          type: asset.type === 'image' ? 'image/jpeg' : 'image/jpeg',
+          size: asset.fileSize,
         }));
         setFiles((prevFiles) => [...prevFiles, ...newFiles]);
       }
     } catch (err) {
-      console.error("Error picking files:", err);
-      Alert.alert("Error", "Failed to pick files");
+      console.error("Error picking images:", err);
+      Alert.alert("Error", "Failed to pick images from gallery");
     }
   };
 
@@ -167,9 +179,9 @@ export default function ImageToPdfTool() {
       <Text style={styles.title}>Image to PDF Converter</Text>
 
       <UploadCard
-        onPress={pickFiles}
-        title="Select Image Files"
-        subtitle="Tap here to browse and select JPG or PNG images"
+        onPress={pickImages}
+        title="Select Images from Gallery"
+        subtitle="Tap here to choose images from your photo library"
       />
 
       {files.length > 0 && (
@@ -197,7 +209,7 @@ export default function ImageToPdfTool() {
       )}
 
       {files.length > 0 && (
-        <TouchableOpacity style={styles.addMoreButton} onPress={pickFiles}>
+        <TouchableOpacity style={styles.addMoreButton} onPress={pickImages}>
           <Text style={styles.addMoreButtonText}>Add More Images</Text>
         </TouchableOpacity>
       )}
@@ -223,7 +235,7 @@ export default function ImageToPdfTool() {
 
       <View style={styles.instructions}>
         <Text style={styles.instructionText}>
-          • Select JPG or PNG images to convert{"\n"}• Images will be added to PDF in
+          • Select images from your photo gallery{"\n"}• Images will be added to PDF in
           the order selected{"\n"}• Each image will be fitted to a separate page{"\n"}• The PDF will be saved and can be shared
         </Text>
       </View>
