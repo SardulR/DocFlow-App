@@ -78,7 +78,7 @@ export default function DocxToPdfTool() {
 
       formData.append("file", fileToUpload);
 
-      console.log("Sending conversion request for:", file.name);
+      
 
       // Update this URL to your backend endpoint
       const response = await fetch(
@@ -91,8 +91,6 @@ export default function DocxToPdfTool() {
           },
         }
       );
-
-      console.log("Response status:", response.status);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
@@ -129,7 +127,7 @@ export default function DocxToPdfTool() {
         encoding: FileSystem.EncodingType.Base64,
       });
 
-      console.log("PDF saved to:", fileUri);
+      
 
       Alert.alert("Success", "DOCX converted to PDF successfully!", [
         { text: "OK", style: "default" },

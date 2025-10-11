@@ -15,7 +15,7 @@ import MergePdfTool from "@/components/tools/MergePdfTool";
 import SplitPdfTool from "@/components/tools/SplitPdfTool";
 // import CompressPdfTool from "@/components/tools/CompressPdfTool";
 import OrganizePdfTool from "@/components/tools/OrganizePdfTool";
-// import AddPageNumbersTool from "@/components/tools/AddPageNumbersTool";
+import AddPageNumbersTool from "@/components/tools/AddPageNumbersTool";
 // import RemoveBgTool from "@/components/tools/RemoveBgTool";
 // import ExtractPdfPagesTool from "@/components/tools/ExtractPdfPagesTool";
 // import RemovePdfPagesTool from "@/components/tools/RemovePdfPagesTool";
@@ -32,7 +32,7 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "split-pdf": SplitPdfTool,
   // "compress-pdf": CompressPdfTool,
   "organize-pdf": OrganizePdfTool,
-  // "add-page-numbers": OrganizePdfTool, 
+  "add-page-numbers": AddPageNumbersTool,
   // "remove-bg": OrganizePdfTool,
   // "extract-pdf-pages": OrganizePdfTool, 
   // "remove-pdf-pages": OrganizePdfTool, 
